@@ -4,7 +4,7 @@
 #include<time.h>
 #include<unistd.h>
 #include<string>
-#include<stack>
+#include<vector>
 using namespace std;
 
 struct Ipt
@@ -21,6 +21,7 @@ int  printPrompt(void)
 string readCmdLine()
 {    
      string input;
+     vector<string>Data
      getline(cin,input);
      return input;    
 }
@@ -33,25 +34,7 @@ int main (void)
 		string cmdLine;
 		printPrompt();
                 cmdLine=readCmdLine();
-                switch(cmdLine)
-                {
-		case "vim":
-                 	
-			childpid=fork();
-                 	if(childPid==0)
-		 	{
-                          cout<<"vim"<<endl; 
-		 	} 
-                        else if(childPid==1)
-                        {       
-				int status=-1;
-				wait(&status);
-                        }
-                        break;
-		
-                case "ls":
-                     	break;
-		}
+                
                 
         }	
 }
