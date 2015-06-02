@@ -21,27 +21,37 @@ struct data
 	int d[251];
 };
 //-----------Function-------------------------------------------------------------------
-int add(int* a, int* b, int* c)
+int add(int *a, int *b, int *c)
 {
 	int  carry = 0;
 	for (int i = 250; i >= 0; i--)
 	{
 		c[i] = a[i] + b[i] + carry;
-		c[i] < 10000 ? carry = 0 : c[i] = c[i] - 10000, carry = 1;
+		if(c[i] >= 10000) 
+		{
+		  	c[i]-= 10000;
+			carry = 1;
+		}
+		else carry=0;
 	}
 	return 0;
 }
-int subtract(int* a, int* b, int* c)
+int subtract(int *a, int *b, int *c)
 {
-	int i, borrow = 0;
-	for (i = 250; i >= 0; i--)
+	int  borrow = 0;
+	for (int i = 250; i >= 0; i--)
 	{
 		c[i] = a[i] - b[i] - borrow;
-		c[i] >= 0 ? borrow = 0 : c[i] = c[i] + 10000, borrow = 1;
+		if(c[i] >= 0)	borrow = 0;
+		else
+		{	
+			c[i]+= 10000; 
+			borrow = 1;
+		}
 	}
 	return 0;
 }
-int divide(int* a, int b)
+int divide(int	*a, int b)
 {
 	int  temp = 0, num = 0;
 	for (int i = 0; i < 250; i++) {
@@ -51,29 +61,27 @@ int divide(int* a, int b)
 	}
 	return 0;
 }
-void *Machin(void*n)
+int Machin(data &P)
 {
-	data *P = (data*)(n);
-	for (int i = P->start; i < P->limit; i++)
+	for (int i = 1; i <Ac_Z; i++)
 	{
-		divide(P->a, 25);
-		divide(P->b, 57121); // 239 * 239 = 57121
-		subtract(P->a, P->b,P->c);
-		divide(P->c, 2 * i - 1);
-		i % 2? add(P->d, P->c,P->d):subtract(P->d, P->c, P->d);
+		divide(P.a, 25);
+		divide(P.b, 57121); // 239 * 239 = 57121
+		subtract(P.a, P.b,P.c);
+		divide(P.c, 2*i-1);
+		i % 2!=0? add(P.d, P.c,P.d):subtract(P.d, P.c, P.d);
 	}
+	return 0;
 }
 int main(int argc,char*argv[]) 
 {	
 	data p;
-	p.start=1;
-	p.limit=770;
-	for(int i=0; i<251;i++){p.a[i]=p.b[i]=p.c[i]=p.d[i]=0;}
-	int *input=new int [argc];
-	pthread_t *T;
-	for(int i = 0 ; i<argc;i++){	input[i]=atoi(argv[i]);	}
-	T=new pthread_t[input[2]];
-	pthread_create(&T[0],NULL,Machin,&p);
+	for(int i=0; i<251;i++){p.a[i]=0;p.b[i]=0;p.c[i]=0;p.d[i]=0;}
+	/*int *input=new int [argc];
+	for(int i = 0 ; i<argc;i++){	input[i]=atoi(argv[i]);	}*/
+	p.a[0]=16*5;
+	p.b[0]=4*239;
+	Machin(p);
 	cout<<p.c[0]<<'.';
 	for(int i=1;i<251;i++){cout<<p.c[i];}
 	return 0;
