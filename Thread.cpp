@@ -70,10 +70,10 @@ int main(int argc,char*argv[])
 	p.limit=770;
 	for(int i=0; i<251;i++){p.a[i]=p.b[i]=p.c[i]=p.d[i]=0;}
 	int *input=new int [argc];
-	pthread_t *thread;
+	pthread_t *T;
 	for(int i = 0 ; i<argc;i++){	input[i]=atoi(argv[i]);	}
-	thread=new pthread[data[2]];
-	pthread_create(&thread[0],NULL,Machin,&p);
+	T=new pthread_t[input[2]];
+	pthread_create(&T[0],NULL,Machin,&p);
 	cout<<p.c[0]<<'.';
 	for(int i=1;i<251;i++){cout<<p.c[i];}
 	return 0;
