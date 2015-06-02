@@ -1,7 +1,9 @@
+#include<unistd.h>
 #include<pthread.h>
 #include <stdio.h> 
 #include <stdlib.h>
 #include<iostream>
+#include<string>
 using namespace std;
 //-------------define------------------------------------------------------------------
 #define L 1000 
@@ -69,6 +71,7 @@ void* Machin(void* n)
 		Div(P->c, 2 * i - 1);
 		i % 2 != 0 ? Add(P->d, P->c, P->d) : Sub(P->d, P->c, P->d);
 	}
+	sleep(1);
 	return 0;
 }
 int main(int argc, char*argv[])
@@ -78,12 +81,16 @@ int main(int argc, char*argv[])
 	int *input=new int [argc];
 	for(int i = 0 ; i<argc;i++){input[i]=atoi(argv[i]);	}
 	p.a[0] = 16 * 5;p.b[0] = 4 * 239;
+	p.start=1;
 	pthread_t *T=new pthread_t[input[2]];
 	pthread_create(&T[0],NULL,Machin,&p);
+	pthread_join(T[0],NULL);
 	cout << p.d[0] << '.';
+	char buff[10];
 	for (int i = 1; i < 251; i++)
 	{
-		cout << p.d[i];
+		sprintf(buff,"%4.4f",((double)p.d[i])/10000.0);
+		cout<<buff+2;
 	}
 	system("pause");
 	return 0;
