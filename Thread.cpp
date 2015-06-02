@@ -9,7 +9,7 @@ using namespace std;
 // L 為位數，N是array長度
 
 //-------------globle------------------------------------------------------------------
-int Ac_Z = (int)(L / 1.39793 + 1);
+int Ac_Z =800;
 //-------------Data_struct-------------------------------------------------------------
 struct data
 {
@@ -21,37 +21,34 @@ struct data
 	int d[251];
 };
 //-----------Function-------------------------------------------------------------------
-int add(int *a, int *b, int *c)
-{
-	int  carry = 0;
-	for (int i = 250; i >= 0; i--)
-	{
+void Add(int* a, int* b, int* c) {
+	int i, carry = 0;
+	for (i = N - 1; i >= 0; i--) {
 		c[i] = a[i] + b[i] + carry;
-		if(c[i] >= 10000) 
-		{
-		  	c[i]-= 10000;
-			carry = 1;
-		}
-		else carry=0;
-	}
-	return 0;
-}
-int subtract(int *a, int *b, int *c)
-{
-	int  borrow = 0;
-	for (int i = 250; i >= 0; i--)
-	{
-		c[i] = a[i] - b[i] - borrow;
-		if(c[i] >= 0)	borrow = 0;
+		if (c[i] < 10000) carry = 0;
 		else
-		{	
-			c[i]+= 10000; 
-			borrow = 1;
+		{
+			carry = 1;  
+			c[i] -= 10000;
 		}
+			
 	}
-	return 0;
 }
-int divide(int	*a, int b)
+
+void Sub(int* a, int* b, int* c) {
+	int i, borrow = 0;
+	for (i = N - 1; i >= 0; i--) {
+		c[i] = a[i] - b[i] - borrow;
+		if (c[i] < 0)
+		{
+			c[i] += 10000; 
+			borrow = 1;
+		} 
+		else borrow = 0;
+		
+	}
+}
+int Div(int	*a, int b)
 {
 	int  temp = 0, num = 0;
 	for (int i = 0; i < 250; i++) {
@@ -61,29 +58,33 @@ int divide(int	*a, int b)
 	}
 	return 0;
 }
-int Machin(data &P)
+void* Machin(void* n)
 {
+	data *P = (data*)n;
 	for (int i = 1; i <Ac_Z; i++)
 	{
-		divide(P.a, 25);
-		divide(P.b, 57121); // 239 * 239 = 57121
-		subtract(P.a, P.b,P.c);
-		divide(P.c, 2*i-1);
-		i % 2!=0? add(P.d, P.c,P.d):subtract(P.d, P.c, P.d);
+		Div(P->a, 25);
+		Div(P->b, 57121); // 239 * 239 = 57121
+		Sub(P->a, P->b, P->c);
+		Div(P->c, 2 * i - 1);
+		i % 2 != 0 ? Add(P->d, P->c, P->d) : Sub(P->d, P->c, P->d);
 	}
 	return 0;
 }
-int main(int argc,char*argv[]) 
-{	
+int main(int argc, char*argv[])
+{
 	data p;
-	for(int i=0; i<251;i++){p.a[i]=0;p.b[i]=0;p.c[i]=0;p.d[i]=0;}
-	/*int *input=new int [argc];
-	for(int i = 0 ; i<argc;i++){	input[i]=atoi(argv[i]);	}*/
-	p.a[0]=16*5;
-	p.b[0]=4*239;
-	Machin(p);
-	cout<<p.c[0]<<'.';
-	for(int i=1;i<251;i++){cout<<p.c[i];}
+	for (int i = 0; i<251; i++){ p.a[i] =p.b[i] = p.c[i] = p.d[i] = 0; }
+	int *input=new int [argc];
+	for(int i = 0 ; i<argc;i++){input[i]=atoi(argv[i]);	}
+	p.a[0] = 16 * 5;p.b[0] = 4 * 239;
+	pthread_t *T=new pthread_t[input[2]];
+	pthread_create(&T[0],NULL,Machin,&p);
+	cout << p.d[0] << '.';
+	for (int i = 1; i < 251; i++)
+	{
+		cout << p.d[i];
+	}
+	system("pause");
 	return 0;
 }
-
